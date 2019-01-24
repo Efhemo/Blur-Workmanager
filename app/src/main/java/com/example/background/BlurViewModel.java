@@ -20,11 +20,20 @@ import android.arch.lifecycle.ViewModel;
 import android.net.Uri;
 import android.text.TextUtils;
 
+import com.example.background.workers.BlurWorker;
+
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.WorkManager;
+
 public class BlurViewModel extends ViewModel {
 
     private Uri mImageUri;
 
+    WorkManager mWorkManager;
+
     public BlurViewModel() {
+
+        mWorkManager = WorkManager.getInstance();
     }
 
     /**
@@ -33,6 +42,12 @@ public class BlurViewModel extends ViewModel {
      */
     void applyBlur(int blurLevel) {
 
+        /*
+        * There are two types of WorkRequests:
+            OneTimeWorkRequest: A WorkRequest that will only execute once.
+            PeriodicWorkRequest: A WorkRequest that will repeat on a cycle.
+        */
+        mWorkManager.enqueue(OneTimeWorkRequest.from(BlurWorker.class));
     }
 
     private Uri uriOrNull(String uriString) {
